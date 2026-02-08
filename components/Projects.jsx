@@ -21,14 +21,13 @@ const Projects = () => {
           <div className="absolute inset-0 w-full h-full overflow-hidden">
             <video
               ref={videoRef}
+              src="/media/trailer.mp4"
               autoPlay
               loop
               muted={isMuted}
               playsInline
               className="w-full h-full object-cover opacity-90 scale-110"
-            >
-              <source src="/media/trailer.mp4" type="video/mp4" />
-            </video>
+            />
           </div>
 
           {/* Out now badge - top */}

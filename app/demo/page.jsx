@@ -38,7 +38,7 @@ export default function Demo() {
             </p>
             
             <a
-              href="/"
+              href="/experience"
               className="inline-flex items-center gap-2 px-8 py-4 border-2 border-white bg-transparent text-white font-semibold rounded-full hover:border-glow-gradient transition-all duration-300 hover:scale-105"
             >
               Film Experience starten
@@ -51,14 +51,13 @@ export default function Demo() {
         <div className="w-full md:w-[62%] relative overflow-hidden h-full">
           <video
             ref={videoRef}
+            src="/media/trailer.mp4"
             autoPlay
             loop
             muted={isMuted}
             playsInline
             className="absolute inset-0 w-full h-full object-cover scale-105"
-          >
-            <source src="/media/trailer.mp4" type="video/mp4" />
-          </video>
+          />
           
           {/* Overlay */}
           <div className="absolute inset-0 bg-black/20"></div>

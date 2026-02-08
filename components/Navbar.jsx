@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Image from 'next/image'
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false)
@@ -55,19 +54,15 @@ const Navbar = () => {
             className="flex items-center gap-3 group"
           >
             <div className="relative w-12 h-12 group-hover:scale-110 transition-transform duration-300">
-              <Image
-                src="/media/logo white.svg"
+              <img
+                src="/media/logo/logo white.svg"
                 alt="C³ Studio Logo"
-                fill
-                className="object-contain transition-opacity duration-300 opacity-100 group-hover:opacity-0"
-                priority
+                className="absolute inset-0 w-full h-full object-contain transition-opacity duration-300 opacity-100 group-hover:opacity-0"
               />
-              <Image
-                src="/media/logo.svg"
+              <img
+                src="/media/logo/logo.svg"
                 alt="C³ Studio Logo Farbig"
-                fill
-                className="object-contain transition-opacity duration-300 opacity-0 group-hover:opacity-100 drop-shadow-[0_0_15px_rgba(0,196,255,0.6),0_0_25px_rgba(255,195,46,0.4),0_0_35px_rgba(254,74,44,0.3)]"
-                priority={false}
+                className="absolute inset-0 w-full h-full object-contain transition-opacity duration-300 opacity-0 group-hover:opacity-100 drop-shadow-[0_0_15px_rgba(0,196,255,0.6),0_0_25px_rgba(255,195,46,0.4),0_0_35px_rgba(254,74,44,0.3)]"
               />
             </div>
           </a>
