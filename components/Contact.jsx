@@ -21,7 +21,7 @@ const Contact = () => {
               Hast du ein Projekt im Kopf? Wir würden gerne von dir hören. Melde dich und lass uns gemeinsam etwas Grossartiges schaffen.
             </p>
             <a
-              href="mailto:hello@c3studio.ch"
+              href="mailto:kontakt@c3-studios.ch"
               className="px-8 py-4 border-2 border-white bg-transparent text-white font-semibold rounded-full hover:border-glow-gradient transition-all duration-300 hover:scale-105"
             >
               Kontakt aufnehmen

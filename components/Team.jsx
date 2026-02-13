@@ -30,7 +30,7 @@ const Team = () => {
     },
     {
       name: 'Sara',
-      role: 'Lead Admin & Finance',
+      role: 'Lead Cinematography',
       image: '/media/Team/Sara normal.jpg'.replace(/ /g, '%20'),
       hoverImage: '/media/Team/Sara Lupe.jpg'.replace(/ /g, '%20'),
       hoverColor: '#ffc32e',

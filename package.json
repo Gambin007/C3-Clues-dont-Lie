@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "vercel-build": "bash scripts/fetch-media.sh && next build"
+    "vercel-build": "next build"
   },
   "dependencies": {
     "gsap": "^3.13.0",

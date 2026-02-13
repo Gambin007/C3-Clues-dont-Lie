@@ -1,14 +1,33 @@
-# Vercel Build Setup für Git LFS
+# Vercel Build Setup
 
-## Problem
-Auf Vercel werden Git LFS Dateien (z.B. `/media/macwallpaper.jpg`) nur als Pointer-Dateien (133 bytes) bereitgestellt, da Vercel standardmäßig kein Git LFS unterstützt.
+## Media Assets: Cloudflare R2 (Aktuell)
 
-## Lösung
-Das Projekt verwendet ein `vercel-build` Script, das während des Builds:
+**WICHTIG:** Media-Assets werden jetzt über Next.js Rewrites von Cloudflare R2 geladen.
+
+Siehe `R2_MEDIA.md` für Details.
+
+### Build Command
+- `vercel-build` führt nur noch `next build` aus
+- Kein Git LFS Fetch mehr nötig
+- Schnellere Builds
+
+---
+
+## Legacy: Git LFS Setup (Nicht mehr aktiv)
+
+**HINWEIS:** Die folgende Dokumentation ist veraltet. Media-Assets kommen jetzt von R2.
+
+### Problem (Legacy)
+Auf Vercel wurden Git LFS Dateien (z.B. `/media/macwallpaper.jpg`) nur als Pointer-Dateien (133 bytes) bereitgestellt, da Vercel standardmäßig kein Git LFS unterstützt.
+
+### Lösung (Legacy)
+Das Projekt verwendete ein `vercel-build` Script, das während des Builds:
 1. Git LFS binary herunterlädt
 2. Das Mac_Interface Repository klont
 3. Git LFS installiert und LFS-Objekte pullt
 4. Media-Dateien nach `public/media` kopiert
+
+**Dieser Ansatz wird nicht mehr verwendet.**
 
 ## Vercel Settings
 
