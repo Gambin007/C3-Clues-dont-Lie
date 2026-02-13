@@ -10,8 +10,11 @@ Alle Media-Assets werden von Cloudflare R2 ausgeliefert statt aus dem lokalen `p
 ### Next.js Rewrites
 Die Rewrite-Regeln in `next.config.js` leiten alle Requests transparent zu R2 weiter:
 
-- `/:path*` → `https://pub-...r2.dev/:path*`
-- `/bela/:path*` → `https://pub-...r2.dev/bela/:path*`
+**Wichtig: Reihenfolge ist entscheidend - spezifisch vor allgemein!**
+
+1. `/media/bela/:path*` → `https://pub-...r2.dev/bela/:path*` (spezifisch)
+2. `/media/:path*` → `https://pub-...r2.dev/:path*` (allgemein)
+3. `/bela/:path*` → `https://pub-...r2.dev/bela/:path*` (direkte Bela-Requests)
 
 ### Code-Änderungen
 **Keine Code-Änderungen nötig!** Alle Pfade bleiben gleich:
@@ -70,15 +73,23 @@ curl -I "https://pub-b5c905be79734df794cad8fee3c595d4.r2.dev/media/movie/part1.m
 
 ```bash
 # Test über Vercel Domain (Rewrites sollten funktionieren)
-curl -I "https://your-domain.vercel.app/media/macwallpaper.jpg"
-# Erwartet: 200 OK, Content-Length sollte groß sein (> 10KB)
+curl -I "https://c3-studios.ch/media/movie/part1.mp4"
+# Erwartet: 200 OK, Content-Length sollte sehr groß sein (> 1MB)
 # Response sollte von R2 kommen (prüfe Header)
 
-curl -I "https://your-domain.vercel.app/media/photos/arbeitsplatz/arbeitsplatz1.png"
+curl -I "https://c3-studios.ch/media/bela/Bela1.mp3"
 # Erwartet: 200 OK, Content-Length sollte groß sein
+# Wird zu R2 /bela/Bela1.mp3 weitergeleitet
 
-curl -I "https://your-domain.vercel.app/media/movie/part1.mp4"
-# Erwartet: 200 OK, Content-Length sollte sehr groß sein (> 1MB)
+curl -I "https://c3-studios.ch/media/bela/gallery/galapagos.jpg"
+# Erwartet: 200 OK, Content-Length sollte groß sein
+# Wird zu R2 /bela/gallery/galapagos.jpg weitergeleitet
+
+curl -I "https://c3-studios.ch/media/macwallpaper.jpg"
+# Erwartet: 200 OK, Content-Length sollte groß sein (> 10KB)
+
+curl -I "https://c3-studios.ch/media/photos/arbeitsplatz/arbeitsplatz1.png"
+# Erwartet: 200 OK, Content-Length sollte groß sein
 ```
 
 ### Browser DevTools
