@@ -38,7 +38,7 @@
     "description": "Zu welchem Zeitpunkt ist Lisas Mutter mit hoher Wahrscheinlichkeit zu Hause?",
     "inputLabel": "Gib das Zeitfenster ein (z. B. HH:MM-HH:MM).",
     "expectedAnswer": "08:00-09:00",
-    "successMessage": "Zeitfenster bestätigt. Zum nächsten Filmabschnitt www.youtube.com."
+    "successMessage": "Zeitfenster bestätigt. Zum nächsten Filmabschnitt /experience/movie/part3"
   }
 ]
 }
