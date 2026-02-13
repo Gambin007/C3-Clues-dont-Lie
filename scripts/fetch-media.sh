@@ -89,17 +89,36 @@ else
   echo "Found media directory: $SRC_MEDIA_DIR"
 fi
 
-# Copy media files (no rsync available on Vercel)
-echo "Copying media files to $DEST (tar pipe, no rsync)..."
+## Copy only LFS-problematic folders (do NOT overwrite movies)
+echo "Copying ONLY LFS folders (photos/images/audio) into $DEST (no delete of movie/videos)..."
 mkdir -p "$PROJECT_ROOT/$DEST"
 
-# delete existing to mimic --delete behavior
-rm -rf "$PROJECT_ROOT/$DEST"/*
-# copy preserving structure
-( cd "$SRC_MEDIA_DIR" && tar -cf - . ) | ( cd "$PROJECT_ROOT/$DEST" && tar -xf - ) || {
-  echo "ERROR: Failed to copy media files with tar pipe"
-  exit 1
-}
+for folder in photos images audio; do
+  if [ -d "$SRC_MEDIA_DIR/$folder" ]; then
+    echo " - Replacing $DEST/$folder from Mac_Interface"
+    rm -rf "$PROJECT_ROOT/$DEST/$folder"
+    mkdir -p "$PROJECT_ROOT/$DEST/$folder"
+    # portable copy (no rsync needed)
+    (cd "$SRC_MEDIA_DIR/$folder" && tar -cf - .) | (cd "$PROJECT_ROOT/$DEST/$folder" && tar -xf -)
+  else
+    echo " - NOTE: $folder not found in source, skipping"
+  fi
+done
+
+# Wallpaper (single file)
+echo "Searching for wallpaper..."
+WALLPAPER_FOUND=$(find "$TMP/repo" -type f -iname "macwallpaper.*" | head -n 1)
+if [ -n "$WALLPAPER_FOUND" ]; then
+  echo "Found wallpaper: $WALLPAPER_FOUND"
+  cp -f "$WALLPAPER_FOUND" "$PROJECT_ROOT/$DEST/macwallpaper.jpg" || {
+    echo "ERROR: Failed to copy wallpaper"
+    exit 1
+  }
+  echo "Wallpaper copied to $PROJECT_ROOT/$DEST/macwallpaper.jpg"
+else
+  echo "WARNING: No wallpaper found matching macwallpaper.*"
+fi
+
 
 # Find and copy wallpaper
 echo "Searching for wallpaper..."
@@ -170,3 +189,12 @@ echo "Cleaning up temporary directory..."
 rm -rf "$TMP"
 
 echo "=== Git LFS media fetch completed successfully ==="
+
+
+echo "Checking that movie files still exist..."
+if [ ! -f "$PROJECT_ROOT/$DEST/movie/part1.mp4" ]; then
+  echo "ERROR: movie/part1.mp4 missing in destination (script must NOT remove it)"
+  exit 1
+fi
+echo "✓ movie/part1.mp4 exists"
+
