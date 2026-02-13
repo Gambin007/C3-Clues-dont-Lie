@@ -3,22 +3,22 @@ const Team = () => {
     {
       name: 'Thalia',
       role: 'Lead Management',
-      image: '/media/Team/Thalia normal.jpg'.replace(/ /g, '%20'),
-      hoverImage: '/media/Team/Thalia Lupe.jpg'.replace(/ /g, '%20'),
+      image: '/media/Team/Thalianormal.jpg'.replace(/ /g, '%20'),
+      hoverImage: '/media/Team/ThaliaLupe.jpg'.replace(/ /g, '%20'),
       hoverColor: '#00c4ff',
     },
     {
       name: 'Philippe',
       role: 'Lead UX/UI Design',
-      image: '/media/Team/Philippe normal.jpg'.replace(/ /g, '%20'),
-      hoverImage: '/media/Team/Philippe Lupe.jpg'.replace(/ /g, '%20'),
+      image: '/media/Team/Philippenormal.jpg'.replace(/ /g, '%20'),
+      hoverImage: '/media/Team/PhilippeLupe.jpg'.replace(/ /g, '%20'),
       hoverColor: '#fe4a2c',
     },
     {
       name: 'Larissa',
       role: 'Lead Story',
-      image: '/media/Team/Larissa normal.jpg'.replace(/ /g, '%20'),
-      hoverImage: '/media/Team/Larissa Lupe.jpg'.replace(/ /g, '%20'),
+      image: '/media/Team/Larissanormal.jpg'.replace(/ /g, '%20'),
+      hoverImage: '/media/Team/LarissaLupe.jpg'.replace(/ /g, '%20'),
       hoverColor: '#ffc32e',
     },
     {
