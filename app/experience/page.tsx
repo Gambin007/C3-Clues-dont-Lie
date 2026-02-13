@@ -15,7 +15,7 @@ export default function ExperiencePage() {
     <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
       {phase === 'movie1' ? (
         <MoviePlayer
-          src="/movie/part1.mp4"
+          src="/media/movie/part1.mp4"
           onEnded={handleVideoEnded}
           autoPlay={true}
           preload="metadata"

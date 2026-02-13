@@ -24,22 +24,22 @@ const Team = () => {
     {
       name: 'Noé',
       role: 'Lead Development',
-      image: '/media/Team/Noe normal.jpg'.replace(/ /g, '%20'),
-      hoverImage: '/media/Team/Noe Lupe.jpg'.replace(/ /g, '%20'),
+      image: '/media/Team/Noenormal.jpg'.replace(/ /g, '%20'),
+      hoverImage: '/media/Team/NoeLupe.jpg'.replace(/ /g, '%20'),
       hoverColor: '#fe4a2c',
     },
     {
       name: 'Sara',
       role: 'Lead Cinematography',
-      image: '/media/Team/Sara normal.jpg'.replace(/ /g, '%20'),
-      hoverImage: '/media/Team/Sara Lupe.jpg'.replace(/ /g, '%20'),
+      image: '/media/Team/Saranormal.jpg'.replace(/ /g, '%20'),
+      hoverImage: '/media/Team/SaraLupe.jpg'.replace(/ /g, '%20'),
       hoverColor: '#ffc32e',
     },
     {
       name: 'Marco',
       role: 'Lead Marketing',
-      image: '/media/Team/Marco normal.jpg'.replace(/ /g, '%20'),
-      hoverImage: '/media/Team/Marco Lupe.jpg'.replace(/ /g, '%20'),
+      image: '/media/Team/Marconormal.jpg'.replace(/ /g, '%20'),
+      hoverImage: '/media/Team/MarcoLupe.jpg'.replace(/ /g, '%20'),
       hoverColor: '#00c4ff',
     },
   ]

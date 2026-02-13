@@ -55,7 +55,7 @@ const Navbar = () => {
           >
             <div className="relative w-12 h-12 group-hover:scale-110 transition-transform duration-300">
               <img
-                src="/media/logo/logo white.svg"
+                src="/media/logo/logo_white.svg"
                 alt="C³ Studio Logo"
                 className="absolute inset-0 w-full h-full object-contain transition-opacity duration-300 opacity-100 group-hover:opacity-0"
               />
