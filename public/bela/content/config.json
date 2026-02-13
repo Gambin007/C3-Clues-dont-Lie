@@ -5,8 +5,8 @@
     "username": "FranzStalder",
     "password": "DreiZucker"
   },
-  "mapImagePath": "./files/map.jpg",
-  "mapPreviewPath": "./files/map_preview.jpg",
+  "mapImagePath": "https://pub-b5c905be79734df794cad8fee3c595d4.r2.dev/bela/map.jpg",
+  "mapPreviewPath": "https://pub-b5c905be79734df794cad8fee3c595d4.r2.dev/bela/map_preview.jpg",
   "todoSteps": [
   {
     "id": "step1",
@@ -38,7 +38,7 @@
     "description": "Zu welchem Zeitpunkt ist Lisas Mutter mit hoher Wahrscheinlichkeit zu Hause?",
     "inputLabel": "Gib das Zeitfenster ein (z. B. HH:MM-HH:MM).",
     "expectedAnswer": "08:00-09:00",
-    "successMessage": "Zeitfenster bestätigt. Zum nächsten Filmabschnitt /experience/movie/part3"
+    "successMessage": "Zeitfenster bestätigt. Zum nächsten Filmabschnitt www.youtube.com."
   }
 ]
 }

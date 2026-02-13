@@ -2,7 +2,7 @@
   {
     "id": "ev-031-1",
     "caseId": "L-031",
-    "filename": "./files/Mandatsaufnahme_Anna_Mueller.jpg",
+    "filename": "https://pub-b5c905be79734df794cad8fee3c595d4.r2.dev/bela/Mandatsaufnahme_Anna_Mueller.jpg",
     "type": "image",
     "description": "Scan Mandatsaufnahmeformular",
     "requiresStepId": null
@@ -10,7 +10,7 @@
     {
     "id": "ev-031-2",
     "caseId": "L-031",
-    "filename": "./files/IDMueller.jpg",
+    "filename": "https://pub-b5c905be79734df794cad8fee3c595d4.r2.dev/bela/IDMueller.jpg",
     "type": "image",
     "description": "Scan der Identitätskarte",
     "requiresStepId": null
@@ -18,7 +18,7 @@
           {
     "id": "ev-031-2",
     "caseId": "L-030",
-    "filename": "./files/winter.jpg",
+    "filename": "https://pub-b5c905be79734df794cad8fee3c595d4.r2.dev/bela/winter.jpg",
     "type": "image",
     "description": "Ferienfoto",
     "requiresStepId": "step1"
@@ -26,7 +26,7 @@
       {
     "id": "ev-031-2",
     "caseId": "L-030",
-    "filename": "./files/peru.jpg",
+    "filename": "https://pub-b5c905be79734df794cad8fee3c595d4.r2.dev/bela/peru.jpg",
     "type": "image",
     "description": "Ferienfoto",
     "requiresStepId": "step1"
@@ -34,7 +34,7 @@
       {
     "id": "ev-031-2",
     "caseId": "L-030",
-    "filename": "./files/galapagos.jpg",
+    "filename": "https://pub-b5c905be79734df794cad8fee3c595d4.r2.dev/bela/galapagos.jpg",
     "type": "image",
     "description": "Ferienfoto",
     "requiresStepId": "step1"
@@ -42,7 +42,7 @@
         {
     "id": "ev-031-2",
     "caseId": "L-033",
-    "filename": "./files/radio_limmat.jpg",
+    "filename": "https://pub-b5c905be79734df794cad8fee3c595d4.r2.dev/bela/radio_limmat.jpg",
     "type": "image",
     "description": "Aufnahme von Radio Limmat bei einer Recherche im Internet gefunden.",
     "requiresStepId": "step3"

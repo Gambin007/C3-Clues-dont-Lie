@@ -1,5 +1,5 @@
 {
-  "_comment": "FILE: content/gallery.json - List of images available in the chat gallery picker. Add image entries here to make them selectable in the chat. Each image needs a filename (in files/gallery/) and an optional label. Use 'specialReplies' to define automatic responses when this image is sent to specific contacts (use contact ID as key).",
+  "_comment": "FILE: content/gallery.json - List of images available in the chat gallery picker. Add image entries here to make them selectable in the chat. Each image can have either a 'filename' (which will be loaded from https://pub-b5c905be79734df794cad8fee3c595d4.r2.dev/bela/) or a 'url' field for custom URLs. An optional 'label' can be provided. Use 'specialReplies' to define automatic responses when this image is sent to specific contacts (use contact ID as key).",
   "images": [
     {
       "filename": "IMG-2910.jpg",

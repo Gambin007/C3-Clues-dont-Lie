@@ -2,14 +2,14 @@
   "_comment": "FILE: content/chat.json - Chat application data storage. Contains all contacts and their message history. Edit this file to add pre-populated conversations, contacts, and messages of different types (text, image, voice, url, call). Call messages support: callStatus (missed/taken/outgoing), duration (optional), callType (optional). Messages support: timestamp (ISO format) or displayTime (manual string like '3h ago', 'Yesterday', etc.) - if displayTime is provided, it will be shown instead of formatted timestamp. userProfile: Set the default user profile (name, avatar, status) - can be overridden via the UI. autoReplies: Array of possible auto-reply messages (set to empty array [] or omit for no auto-replies). replyDelay: Delay in ms before auto-reply appears (default: 1000).",
   "userProfile": {
     "name": "Tim (Praktikant)",
-    "avatar": "./files/ProfilePictureTim.jpg",
+    "avatar": "https://pub-b5c905be79734df794cad8fee3c595d4.r2.dev/bela/ProfilePictureTim.jpg",
     "status": "Online"
   },
   "contacts": [
     {
       "id": "contact-1",
       "name": "Bela Gruber",
-      "avatar": "./files/ProfilePictureBela.jpg",
+      "avatar": "https://pub-b5c905be79734df794cad8fee3c595d4.r2.dev/bela/ProfilePictureBela.jpg",
       "status": "Online",
       "autoReplies": [
         "Konzentrier di.",
@@ -38,7 +38,7 @@
     {
       "id": "contact-2",
       "name": "Andreas (Hauswart)",
-      "avatar": "./files/ProfilePictureHauswart.jpg",
+      "avatar": "https://pub-b5c905be79734df794cad8fee3c595d4.r2.dev/bela/ProfilePictureHauswart.jpg",
       "status": "Zuletzt online vor 2 Stunde",
       "autoReplies": []
     },
@@ -368,7 +368,7 @@
   {
     "id": "msg-39",
     "type": "image",
-    "content": "./files/tasse.jpg",
+    "content": "https://pub-b5c905be79734df794cad8fee3c595d4.r2.dev/bela/tasse.jpg",
     "filename": "IMG-578923.jpg",
     "caption": "Die da?",
     "sent": false,
@@ -458,7 +458,7 @@
   {
     "id": "msg-50",
     "type": "image",
-    "content": "./files/Kaffe.png",
+    "content": "https://pub-b5c905be79734df794cad8fee3c595d4.r2.dev/bela/Kaffe.png",
     "filename": "72632.jpg",
     "caption": "3 Zucker",
     "sent": false,
@@ -596,9 +596,9 @@
   {
     "id": "msg-67",
     "type": "voice",
-    "content": "./files/Tim1.mp3",
+    "content": "https://pub-b5c905be79734df794cad8fee3c595d4.r2.dev/bela/Tim1.mp3",
     "filename": "voice_note_001.mp3",
-    "duration": "0:17",
+    "duration": "0:44",
     "sent": true,
     "timestamp": "2026-01-09T11:00:00Z",
     "displayTime": "Heute, 18:41"
@@ -606,7 +606,7 @@
   {
     "id": "msg-68",
     "type": "voice",
-    "content": "./files/Bela1.mp3",
+    "content": "https://pub-b5c905be79734df794cad8fee3c595d4.r2.dev/bela/Bela1.mp3",
     "filename": "voice_note_002.mp3",
     "duration": "0:44",
     "sent": false,
@@ -616,7 +616,7 @@
   {
     "id": "msg-69",
     "type": "voice",
-    "content": "./files/Bela2.mp3",
+    "content": "https://pub-b5c905be79734df794cad8fee3c595d4.r2.dev/bela/Bela2.mp3",
     "filename": "voice_note_003.mp3",
     "duration": "0:03",
     "sent": false,
@@ -635,7 +635,7 @@
   {
     "id": "msg-71",
     "type": "voice",
-    "content": "./files/Bela3.mp3",
+    "content": "https://pub-b5c905be79734df794cad8fee3c595d4.r2.dev/bela/Bela3.mp3",
     "filename": "voice_note_004.mp3",
     "duration": "0:22",
     "sent": false,
@@ -645,7 +645,7 @@
   {
     "id": "msg-72",
     "type": "voice",
-    "content": "./files/Bela4.mp3",
+    "content": "https://pub-b5c905be79734df794cad8fee3c595d4.r2.dev/bela/Bela4.mp3",
     "filename": "voice_note_005.mp3",
     "duration": "0:18",
     "sent": false,
