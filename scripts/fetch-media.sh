@@ -123,6 +123,21 @@ for folder in movie videos Team; do
   fi
 done
 
+echo "Copying root media files from C3 -> $DEST (e.g. trailer.mp4)..."
+# Copy files that live directly in public/media (maxdepth 1)
+# This fixes trailer.mp4 and any other top-level LFS files.
+for f in "$C3_MEDIA_DIR"/*; do
+  if [ -f "$f" ]; then
+    base="$(basename "$f")"
+    # ignore common junk
+    if [ "$base" = ".DS_Store" ]; then
+      continue
+    fi
+    echo " - Replacing $DEST/$base"
+    cp -f "$f" "$PROJECT_ROOT/$DEST/$base"
+  fi
+done
+
 # ===== Sanity checks =====
 echo "=== Sanity Checks ==="
 
