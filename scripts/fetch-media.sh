@@ -9,17 +9,15 @@ DEST="public/media"
 GIT_LFS_VERSION="v3.5.1"
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-echo "=== Git LFS Media Fetch (Vercel-safe) ==="
+echo "=== Git LFS Media Fetch (Public repos, no token) ==="
 echo "Project root: $PROJECT_ROOT"
 
 # ===== Helpers =====
 file_size() {
-  # macOS: stat -f%z, Linux: stat -c%s
   stat -f%z "$1" 2>/dev/null || stat -c%s "$1" 2>/dev/null || echo "0"
 }
 
 copy_dir_tar() {
-  # copy_dir_tar <src_dir> <dest_dir>
   local src="$1"
   local dst="$2"
   mkdir -p "$dst"
@@ -27,7 +25,6 @@ copy_dir_tar() {
 }
 
 clone_and_lfs_pull() {
-  # clone_and_lfs_pull <repo_url> <folder_name>
   local repo_url="$1"
   local folder="$2"
 
@@ -51,7 +48,6 @@ clone_and_lfs_pull() {
 }
 
 find_media_dir() {
-  # find_media_dir <repo_root>
   local root="$1"
   if [ -d "$root/public/media" ]; then
     echo "$root/public/media"
@@ -81,7 +77,7 @@ export PATH="$PWD/git-lfs-${GIT_LFS_VERSION}:$PATH"
 echo "git-lfs version:"
 git-lfs version
 
-# ===== 1) Mac_Interface (photos/images/audio + wallpaper) =====
+# ===== 1) Mac_Interface -> photos/images/audio + wallpaper =====
 clone_and_lfs_pull "$REPO_MAC" "repo_mac"
 MAC_MEDIA_DIR="$(find_media_dir "$PROJECT_ROOT/$TMP/repo_mac")" || {
   echo "ERROR: Could not find public/media in Mac_Interface clone"
@@ -104,21 +100,13 @@ echo "Copying wallpaper from Mac_Interface..."
 WALLPAPER_FOUND="$(find "$PROJECT_ROOT/$TMP/repo_mac" -type f -iname "macwallpaper.*" | head -n 1 || true)"
 if [ -n "$WALLPAPER_FOUND" ]; then
   cp -f "$WALLPAPER_FOUND" "$PROJECT_ROOT/$DEST/macwallpaper.jpg"
+  echo " - copied -> $PROJECT_ROOT/$DEST/macwallpaper.jpg"
 else
   echo "WARNING: macwallpaper.* not found in Mac_Interface repo"
 fi
 
-# ===== 2) C3 repo (movie/videos/Team) - needs GH_TOKEN if LFS/private =====
-# If GH_TOKEN is set, use it for authenticated clone (avoids LFS auth problems)
-C3_CLONE_URL="$REPO_C3"
-if [ -n "${GH_TOKEN:-}" ]; then
-  # token must have access to this repo + LFS
-  C3_CLONE_URL="https://${GH_TOKEN}@github.com/Gambin007/C3-Clues-dont-Lie.git"
-fi
-
-echo "Cloning C3 repo for media (movie/videos/Team)..."
-clone_and_lfs_pull "$C3_CLONE_URL" "repo_c3"
-
+# ===== 2) C3 repo -> movie/videos/Team =====
+clone_and_lfs_pull "$REPO_C3" "repo_c3"
 C3_MEDIA_DIR="$(find_media_dir "$PROJECT_ROOT/$TMP/repo_c3")" || {
   echo "ERROR: Could not find public/media in C3 clone"
   exit 1
@@ -138,7 +126,6 @@ done
 # ===== Sanity checks =====
 echo "=== Sanity Checks ==="
 
-# wallpaper exists + > 10KB
 WALL="$PROJECT_ROOT/$DEST/macwallpaper.jpg"
 if [ ! -f "$WALL" ]; then
   echo "ERROR: macwallpaper.jpg missing at $WALL"
@@ -151,7 +138,6 @@ if [ "$WALL_SIZE" -lt $((10*1024)) ]; then
 fi
 echo "✓ macwallpaper.jpg size: ${WALL_SIZE} bytes (OK)"
 
-# movie part1 must exist + > 1MB
 MOV="$PROJECT_ROOT/$DEST/movie/part1.mp4"
 if [ ! -f "$MOV" ]; then
   echo "ERROR: movie/part1.mp4 missing in destination"
@@ -164,7 +150,6 @@ if [ "$MOV_SIZE" -lt $((1*1024*1024)) ]; then
 fi
 echo "✓ movie/part1.mp4 size: ${MOV_SIZE} bytes (OK)"
 
-# Detect any LFS pointer files that slipped through
 echo "Checking for Git LFS pointer files in $DEST..."
 POINTER_FILES="$(find "$PROJECT_ROOT/$DEST" -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.mp3" -o -name "*.mp4" -o -name "*.mov" \) -size -300c -print 2>/dev/null || true)"
 if [ -n "$POINTER_FILES" ]; then
