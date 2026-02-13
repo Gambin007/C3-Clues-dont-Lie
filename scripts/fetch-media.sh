@@ -6,8 +6,10 @@ TMP=".tmp_media"
 REPO="https://github.com/Gambin007/Mac_Interface.git"
 DEST="public/media"
 GIT_LFS_VERSION="v3.5.1"
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 echo "=== Starting Git LFS media fetch ==="
+echo "Project root: $PROJECT_ROOT"
 
 # Cleanup
 echo "Cleaning temporary directory..."
@@ -45,7 +47,7 @@ git-lfs version || {
   exit 1
 }
 
-# Clone repository
+# Clone repository (public, no auth)
 echo "Cloning Mac_Interface repository..."
 git clone --depth 1 "$REPO" repo || {
   echo "ERROR: Failed to clone repository"
@@ -67,55 +69,97 @@ git lfs pull || {
   exit 1
 }
 
-# Verify LFS objects were pulled
-echo "Verifying LFS objects..."
-if [ -f "public/media/macwallpaper.jpg" ]; then
-  FILE_SIZE=$(stat -f%z "public/media/macwallpaper.jpg" 2>/dev/null || stat -c%s "public/media/macwallpaper.jpg" 2>/dev/null || echo "0")
-  if [ "$FILE_SIZE" -lt 1000 ]; then
-    echo "WARNING: macwallpaper.jpg is only ${FILE_SIZE} bytes - might still be a pointer file"
-    echo "Attempting to force pull LFS objects..."
-    git lfs fetch --all || true
-    git lfs checkout || true
-  else
-    echo "✓ macwallpaper.jpg size: ${FILE_SIZE} bytes (looks good)"
-  fi
+cd "$PROJECT_ROOT"
+
+# Find source media directory
+echo "Finding source media directory..."
+SRC_MEDIA_DIR=""
+if [ -d "$TMP/repo/public/media" ]; then
+  SRC_MEDIA_DIR="$TMP/repo/public/media"
+  echo "Found media directory: $SRC_MEDIA_DIR"
 else
-  echo "WARNING: macwallpaper.jpg not found in expected location"
+  echo "repo/public/media not found, searching..."
+  SRC_MEDIA_DIR=$(find "$TMP/repo" -path "*/public/media" -type d | head -n 1)
+  if [ -z "$SRC_MEDIA_DIR" ] || [ ! -d "$SRC_MEDIA_DIR" ]; then
+    echo "ERROR: Source media directory not found"
+    echo "Available directories in repo:"
+    find "$TMP/repo" -type d | head -20
+    exit 1
+  fi
+  echo "Found media directory: $SRC_MEDIA_DIR"
 fi
 
-cd ../..
-
-# Copy media files
-SRC="$TMP/repo/public/media"
-if [ ! -d "$SRC" ]; then
-  echo "ERROR: Source folder not found: $SRC"
-  echo "Available files in repo:"
-  ls -la "$TMP/repo/public/" || true
-  exit 1
-fi
-
-echo "Copying media files to $DEST..."
-rm -rf "$DEST"
-mkdir -p public
-cp -R "$SRC" "$DEST" || {
-  echo "ERROR: Failed to copy media files"
+# Copy media files using rsync
+echo "Copying media files to $DEST using rsync..."
+mkdir -p "$PROJECT_ROOT/public"
+rsync -av --delete "$SRC_MEDIA_DIR/" "$PROJECT_ROOT/$DEST/" || {
+  echo "ERROR: Failed to copy media files with rsync"
   exit 1
 }
 
-# Sanity check
-echo "=== Sanity check ==="
-if [ -f "$DEST/macwallpaper.jpg" ]; then
-  FILE_SIZE=$(stat -f%z "$DEST/macwallpaper.jpg" 2>/dev/null || stat -c%s "$DEST/macwallpaper.jpg" 2>/dev/null || echo "0")
-  echo "macwallpaper.jpg size: ${FILE_SIZE} bytes"
-  if [ "$FILE_SIZE" -lt 1000 ]; then
-    echo "ERROR: macwallpaper.jpg is still too small (${FILE_SIZE} bytes) - Git LFS pull may have failed"
+# Find and copy wallpaper
+echo "Searching for wallpaper..."
+WALLPAPER_FOUND=$(find "$TMP/repo" -type f -iname "macwallpaper.*" | head -n 1)
+if [ -n "$WALLPAPER_FOUND" ]; then
+  echo "Found wallpaper: $WALLPAPER_FOUND"
+  cp -f "$WALLPAPER_FOUND" "$PROJECT_ROOT/$DEST/macwallpaper.jpg" || {
+    echo "ERROR: Failed to copy wallpaper"
     exit 1
-  fi
-  echo "✓ Media files copied successfully"
+  }
+  echo "Wallpaper copied to $PROJECT_ROOT/$DEST/macwallpaper.jpg"
 else
-  echo "ERROR: macwallpaper.jpg not found in destination"
+  echo "WARNING: No wallpaper found matching macwallpaper.*"
+fi
+
+# Sanity check: wallpaper must exist and be > 10KB
+echo "=== Sanity Checks ==="
+WALLPAPER_PATH="$PROJECT_ROOT/$DEST/macwallpaper.jpg"
+if [ ! -f "$WALLPAPER_PATH" ]; then
+  echo "ERROR: macwallpaper.jpg not found at $WALLPAPER_PATH"
   exit 1
 fi
+
+WALLPAPER_SIZE=$(stat -f%z "$WALLPAPER_PATH" 2>/dev/null || stat -c%s "$WALLPAPER_PATH" 2>/dev/null || echo "0")
+MIN_SIZE=$((10 * 1024))  # 10KB
+
+if [ "$WALLPAPER_SIZE" -lt "$MIN_SIZE" ]; then
+  echo "ERROR: macwallpaper.jpg is too small: ${WALLPAPER_SIZE} bytes (minimum: ${MIN_SIZE} bytes)"
+  exit 1
+fi
+
+echo "✓ macwallpaper.jpg size: ${WALLPAPER_SIZE} bytes (OK)"
+
+# Check for Git LFS pointer files
+echo "Checking for Git LFS pointer files..."
+POINTER_FILES=$(find "$PROJECT_ROOT/$DEST" -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.mp3" -o -name "*.mp4" -o -name "*.mov" \) -size -300c -print 2>/dev/null || true)
+
+if [ -n "$POINTER_FILES" ]; then
+  POINTER_COUNT=0
+  POINTER_LIST=""
+  
+  while IFS= read -r file; do
+    if [ -f "$file" ]; then
+      # Check if file contains Git LFS pointer header
+      if head -n 1 "$file" 2>/dev/null | grep -q "version https://git-lfs.github.com/spec/v1"; then
+        POINTER_COUNT=$((POINTER_COUNT + 1))
+        FILE_SIZE=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null || echo "0")
+        POINTER_LIST="${POINTER_LIST}  - $file (${FILE_SIZE} bytes)\n"
+      fi
+    fi
+  done <<< "$POINTER_FILES"
+  
+  if [ "$POINTER_COUNT" -gt 0 ]; then
+    echo ""
+    echo "ERROR: Found $POINTER_COUNT Git LFS pointer file(s) in public/media:"
+    echo -e "$POINTER_LIST"
+    echo ""
+    echo "These files were not properly pulled from Git LFS."
+    echo "Please check your Git LFS configuration and ensure LFS objects are accessible."
+    exit 1
+  fi
+fi
+
+echo "✓ No Git LFS pointer files found"
 
 # Cleanup
 echo "Cleaning up temporary directory..."
