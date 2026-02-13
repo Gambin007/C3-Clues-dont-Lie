@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { usePuzzle } from '@interface/contexts/PuzzleContext'
 import { useWindows } from '@interface/contexts/WindowContext'
 import { DESKTOP_FOLDERS, DESKTOP_FILES, DESKTOP_FOLDER_POSITIONS, DesktopFile } from './desktopData'
@@ -37,15 +38,25 @@ const getFileIcon = (item: DesktopFile): string => {
   return '📄'
 }
 
-export default function Dateien({ windowId }: { windowId: string }) {
+export default function Dateien({ windowId, initialPath }: { windowId: string; initialPath?: string[] }) {
+  const router = useRouter()
   const { archiveUnlocked, setPhotoDeepLink, setFileDeepLink, fileDeepLink } = usePuzzle()
-  const { createWindow } = useWindows()
-  const [currentPath, setCurrentPath] = useState<string[]>([])
+  const { createWindow, getWindow } = useWindows()
+  const [currentPath, setCurrentPath] = useState<string[]>(initialPath || [])
   const [selectedFile, setSelectedFile] = useState<DesktopFile | null>(null)
   const [showPreview, setShowPreview] = useState(true)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [showVideoModal, setShowVideoModal] = useState(false)
   const [videoUrl, setVideoUrl] = useState<string>('')
+  const [showPart2InArchive, setShowPart2InArchive] = useState(false)
+
+  // Set initial path from window state if provided
+  useEffect(() => {
+    const window = getWindow(windowId)
+    if (window?.initialPath && window.initialPath.length > 0 && currentPath.length === 0) {
+      setCurrentPath(window.initialPath)
+    }
+  }, [windowId, getWindow, currentPath.length])
 
   // fileDeepLink Handler: Navigiere automatisch zur Datei
   useEffect(() => {
@@ -68,7 +79,7 @@ export default function Dateien({ windowId }: { windowId: string }) {
       const pathParts = parts.slice(0, -1) // Alle außer letztem (Dateiname)
       const fileName = parts[parts.length - 1]
       
-      // Navigiere zum Pfad
+      // Navigiere zum Pfad (nur wenn fileDeepLink gesetzt ist, nicht bei normaler Navigation)
       setCurrentPath(pathParts)
       
       // Warte kurz auf Rendering, dann wähle Datei aus
@@ -170,29 +181,69 @@ export default function Dateien({ windowId }: { windowId: string }) {
 
     // Navigiere durch Ordner-Struktur
     const rootFolderName = currentPath[0]
-    const rootFolder = DESKTOP_FOLDER_POSITIONS.find(f => f.name === rootFolderName)
-    let current: DesktopFile[] | undefined = rootFolder?.files || DESKTOP_FOLDERS[rootFolderName]
     
     // ARCHIV kann auch Root-Ordner sein
     if (rootFolderName === 'ARCHIV' && archiveUnlocked) {
-      current = DESKTOP_FOLDERS.ARCHIV
-    }
-    
-    if (!current) {
-      return []
-    }
-    
-    // Navigiere durch Unterordner
-    for (let i = 1; i < currentPath.length; i++) {
-      const folderName = currentPath[i]
-      const folder: DesktopFile | undefined = current.find(item => item.name === folderName && item.type === 'folder')
-      if (!folder || !folder.children) {
-        return []
+      let current = [...DESKTOP_FOLDERS.ARCHIV]
+      // Füge part2.mp4 hinzu, wenn anhang_video.mp4 bereits abgespielt wurde
+      if (showPart2InArchive) {
+        current.push({
+          name: 'part2.mp4',
+          type: 'file',
+          url: '/media/movie/part2.mp4',
+        })
       }
-      current = folder.children
+      
+      // Navigiere durch Unterordner im ARCHIV
+      for (let i = 1; i < currentPath.length; i++) {
+        const folderName = currentPath[i]
+        const folder: DesktopFile | undefined = current.find(item => item.name === folderName && item.type === 'folder')
+        if (!folder || !folder.children) {
+          return []
+        }
+        current = folder.children
+      }
+      
+      return current
     }
-
-    return current
+    
+    // Suche zuerst in DESKTOP_FOLDER_POSITIONS
+    const rootFolder = DESKTOP_FOLDER_POSITIONS.find(f => f.name === rootFolderName)
+    if (rootFolder) {
+      let current: DesktopFile[] = rootFolder.files
+      
+      // Navigiere durch Unterordner
+      for (let i = 1; i < currentPath.length; i++) {
+        const folderName = currentPath[i]
+        const folder: DesktopFile | undefined = current.find(item => item.name === folderName && item.type === 'folder')
+        if (!folder || !folder.children) {
+          return []
+        }
+        current = folder.children
+      }
+      
+      return current
+    }
+    
+    // Fallback: Suche direkt in DESKTOP_FOLDERS
+    if (DESKTOP_FOLDERS[rootFolderName]) {
+      let current: DesktopFile[] = DESKTOP_FOLDERS[rootFolderName]
+      
+      // Navigiere durch Unterordner
+      for (let i = 1; i < currentPath.length; i++) {
+        const folderName = currentPath[i]
+        const folder: DesktopFile | undefined = current.find(item => item.name === folderName && item.type === 'folder')
+        if (!folder || !folder.children) {
+          return []
+        }
+        current = folder.children
+      }
+      
+      return current
+    }
+    
+    // Ordner nicht gefunden
+    return []
   }
 
   const handleItemClick = (item: DesktopFile) => {
@@ -202,10 +253,23 @@ export default function Dateien({ windowId }: { windowId: string }) {
       setSelectedFile(null)
     } else {
       // Prüfe ob es eine Video-Datei ist
-      if (item.name.endsWith('.mp4') || item.name === 'anhang_video.mp4') {
-        if (item.url) {
-          setVideoUrl(item.url)
-          setShowVideoModal(true)
+      if (item.name.endsWith('.mp4') || item.name === 'anhang_video.mp4' || item.name === 'part2.mp4') {
+        if (item.name === 'part2.mp4') {
+          // part2.mp4 navigiert zur dedizierten Route
+          router.push('/experience/movie/part2')
+          return
+        } else if (item.name === 'anhang_video.mp4') {
+          // anhang_video.mp4 öffnet im normalen Modal
+          if (item.url) {
+            setVideoUrl(item.url)
+            setShowVideoModal(true)
+          }
+        } else {
+          // Andere Videos im normalen Modal
+          if (item.url) {
+            setVideoUrl(item.url)
+            setShowVideoModal(true)
+          }
         }
       } else {
         // Zeige Datei-Inhalt
@@ -713,12 +777,12 @@ export default function Dateien({ windowId }: { windowId: string }) {
               style={{
                 position: 'absolute',
                 top: '-40px',
-                right: 0,
+                right: '20px',
                 width: '32px',
                 height: '32px',
                 padding: 0,
-                background: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
+                background: 'rgba(30, 31, 36, 0.8)',
+                border: '1px solid var(--border)',
                 borderRadius: '8px',
                 cursor: 'pointer',
                 fontSize: '20px',
@@ -727,13 +791,17 @@ export default function Dateien({ windowId }: { windowId: string }) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 transition: 'all 0.2s ease',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
                 zIndex: 10001,
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'
+                e.currentTarget.style.background = 'rgba(30, 31, 36, 0.95)'
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.25)'
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                e.currentTarget.style.background = 'rgba(30, 31, 36, 0.8)'
+                e.currentTarget.style.borderColor = 'var(--border)'
               }}
             >
               ×
@@ -744,6 +812,13 @@ export default function Dateien({ windowId }: { windowId: string }) {
               src={videoUrl}
               controls
               autoPlay
+              onEnded={() => {
+                // Wenn anhang_video.mp4 endet, zeige part2.mp4 im Archiv-Ordner an
+                if (videoUrl.includes('anhang_video.mp4') && !showPart2InArchive) {
+                  setShowPart2InArchive(true)
+                  setShowVideoModal(false)
+                }
+              }}
               style={{
                 width: '100%',
                 maxHeight: '70vh',

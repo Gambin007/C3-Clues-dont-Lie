@@ -1,0 +1,80 @@
+[
+
+  {
+    "id": "act-010",
+    "caseId": "L-030",
+    "timestamp": "2026-01-06T09:10:00Z",
+    "message": "Notizen von Erstgespräch mit Klientin Anna M. dokumentiert und im Fall abgelegt.",
+    "requiresStepId": null
+  },
+  {
+    "id": "act-011",
+    "caseId": "L-030",
+    "timestamp": "2026-01-06T10:10:00Z",
+    "message": "Fotos die Klientin Anna M. mitgebracht hat fotografiert und in Fall abgelegt.",
+    "requiresStepId": "step1"
+  },
+  {
+    "id": "act-012",
+    "caseId": "L-030",
+    "timestamp": "2026-01-06T10:12:00Z",
+    "message": "Nachtrag von persönlicher Aussage von Anna M. erfasst.",
+    "requiresStepId": "step1"
+  },
+  {
+    "id": "act-010",
+    "caseId": "L-031",
+    "timestamp": "2026-01-06T08:10:00Z",
+    "message": "Mandatsaufnahmeformular im Fall abgelegt.",
+    "requiresStepId": null
+  },
+  {
+    "id": "act-011",
+    "caseId": "L-031",
+    "timestamp": "2026-01-06T08:12:00Z",
+    "message": "Identitätsnachweis der Klientin Anna M. digital erfasst und dem Fall zugeordnet.",
+    "requiresStepId": null
+  },
+  {
+    "id": "act-012",
+    "caseId": "L-031",
+    "timestamp": "2026-01-06T08:15:30Z",
+    "message": "Dokumentenscan geprüft. Qualität und Lesbarkeit für Archivierungszwecke bestätigt.",
+    "requiresStepId": null
+  },
+  {
+    "id": "act-013",
+    "caseId": "L-031",
+    "timestamp": "2026-01-06T08:16:00Z",
+    "message": "Formale Angaben des Identitätsnachweises mit Mandatsdaten abgeglichen. Keine Abweichungen festgestellt.",
+    "requiresStepId": null
+  },
+  {
+    "id": "act-014",
+    "caseId": "L-031",
+    "timestamp": "2026-01-06T08:17:00Z",
+    "message": "Identitätsnachweis zur internen Referenz abgelegt. Keine weitere Bearbeitung vorgesehen.",
+    "requiresStepId": null
+  },
+  {
+    "id": "act-014",
+    "caseId": "L-032",
+    "timestamp": "2026-01-06T11:17:00Z",
+    "message": "Dokumentation aller von der Mutter Anna M. genannten Informationen über Liesa Müller.",
+    "requiresStepId": null
+  },
+  {
+    "id": "act-010",
+    "caseId": "L-033",
+    "timestamp": "2026-01-06T12:17:00Z",
+    "message": "Referenzbefragung zur Mandatsprüfung durchgeführt und dokumentiert.",
+    "requiresStepId": "step3"
+  },
+  {
+    "id": "act-011",
+    "caseId": "L-033",
+    "timestamp": "2026-01-06T12:30:00Z",
+    "message": "Bild von Tims Internetrecherche in Fall abgelegt.",
+    "requiresStepId": "step3"
+  }
+]

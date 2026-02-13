@@ -14,11 +14,12 @@ export interface WindowState {
   fullscreen: boolean
   zIndex: number
   resizable?: boolean
+  initialPath?: string[] // For Files app: path to open
 }
 
 interface WindowContextType {
   windows: WindowState[]
-  createWindow: (appId: string) => void
+  createWindow: (appId: string, options?: { initialPath?: string[] }) => void
   closeWindow: (id: string) => void
   minimizeWindow: (id: string) => void
   restoreWindow: (id: string) => void
@@ -36,7 +37,7 @@ let nextZIndex = 10
 export function WindowProvider({ children }: { children: React.ReactNode }) {
   const [windows, setWindows] = useState<WindowState[]>([])
 
-  const createWindow = useCallback((appId: string) => {
+  const createWindow = useCallback((appId: string, options?: { initialPath?: string[] }) => {
     const id = `win-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
     const appConfig = APP_CONFIGS[appId]
     const initialSize = appConfig?.initialSize || { width: 520, height: 340 }
@@ -53,6 +54,7 @@ export function WindowProvider({ children }: { children: React.ReactNode }) {
       fullscreen: shouldBeFullscreen,
       zIndex: ++nextZIndex,
       resizable: appConfig?.resizable !== false, // Default: true, unless explicitly false
+      initialPath: options?.initialPath,
     }
     setWindows(prev => [...prev, newWindow])
   }, [])

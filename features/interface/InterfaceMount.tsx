@@ -19,7 +19,7 @@ import Home from './app/page'  // ggf. Pfad anpassen, aber keine Logik ändern
 
 export default function InterfaceMount() {
   return (
-    <div style={{ width: '100vw', height: '100vh', overflow: 'hidden', background: '#000' }}>
+    <div className="desktop-root" style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
       <Home />
     </div>
   )

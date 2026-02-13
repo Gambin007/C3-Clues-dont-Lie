@@ -19,18 +19,25 @@ body {
   margin: 0;
   font: 14px/1.4 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
   color: var(--text);
-  background: radial-gradient(1200px 700px at 70% -10%, #223 0%, #111 60%, #0a0a0f 100%);
+  background: #0a0a0f;
   overflow: hidden;
   user-select: none;
+}
+
+/* === Desktop Root === */
+.desktop-root {
+  width: 100vw;
+  height: 100vh;
+  background-image: url("/media/macwallpaper.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 /* === Desktop === */
 .desktop {
   position: relative;
   width: 100%; height: 100vh;
-  background-image: url('/macwallpaper.jpg'); /* set your wallpaper here if you want */
-  background-size: cover;
-  background-position: center;
 }
 
 /* === Menu Bar === */
@@ -192,7 +199,26 @@ body {
 
 /* Helper */
 .hidden { display: none !important; }
-.btn { background: var(--glass); color: var(--text); border: 1px solid var(--border); padding: 8px 10px; border-radius: 10px; cursor: pointer; }
+.btn { 
+  background: var(--glass); 
+  color: var(--text); 
+  border: 1px solid var(--border); 
+  padding: 8px 16px; 
+  border-radius: 8px; 
+  cursor: pointer; 
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+.btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.btn:disabled {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
 
 /* === Weather widget (desktop only) === */
 .weather-widget {

@@ -1,0 +1,48 @@
+[
+  {
+    "id": "L-030",
+    "title": "Gespräch mit Anna Müller",
+    "status": "active",
+    "year": 2026,
+    "tags": ["family", "statement"],
+    "assignedTo": "Bela Gruber",
+    "lastUpdated": "2026-01-06",
+    "summary": "Diverse Notizen aus dem ersten Gespräch mit der Klientin Anna M.",
+    "requiresStepId": null
+  },
+  {
+    "id": "L-031",
+    "title": "Admin – Anna M.",
+    "status": "active",
+    "year": 2026,
+    "tags": ["identity", "document"],
+    "assignedTo": "Bela Gruber",
+    "lastUpdated": "2026-01-06",
+    "summary": "Scan der nötigen Dokumenten für Ablagezwecke.",
+    "requiresStepId": null
+  },
+    {
+    "id": "L-032",
+    "title": "Informationen über Liesa Müller",
+    "status": "active",
+    "year": 2026,
+    "tags": ["family", "statement"],
+    "assignedTo": "Bela Gruber",
+    "lastUpdated": "2026-01-06",
+    "summary": "Angaben der Mutter Anna über ihre Tochter Lisa.",
+    "requiresStepId": "step2"
+  },
+{
+  "id": "L-033",
+  "title": "Telefonische Referenzbefragung zur Mandatsprüfung",
+  "status": "active",
+  "year": 2026,
+  "tags": ["referenz", "prüfung"],
+  "assignedTo": "Bela Gruber",
+  "lastUpdated": "2026-01-06",
+  "summary": "Zur internen Prüfung der Plausibilität des Anliegens und zur Vermeidung unnötiger oder unbegründeter Ermittlungen wurde vor Mandatsannahme eine telefonische Referenzbefragung durchgeführt. Die Klientin benannte hierfür ihre Kollegin Sandra Bucher als Kontaktperson. Die im Rahmen der Befragung erhobenen Kontaktdaten wurden ausschliesslich zu Prüfzwecken verwendet und nach Abschluss der Befragung gemäss interner Datenschutzrichtlinie wieder gelöscht.",
+  "requiresStepId": "step3"
+}
+
+]
+

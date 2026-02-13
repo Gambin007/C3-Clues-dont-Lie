@@ -10,7 +10,7 @@ import Spotify from './Spotify'
 
 export interface AppConfig {
   title: string
-  component: React.ComponentType<{ windowId: string }>
+  component: React.ComponentType<{ windowId: string; initialPath?: string[] }>
   initialSize?: { width: number; height: number }
   resizable?: boolean // Default: true
 }
@@ -45,7 +45,7 @@ export const APP_CONFIGS: Record<string, AppConfig> = {
   dateien: {
     title: 'Dateien',
     component: Dateien,
-    initialSize: { width: 820, height: 540 },
+    initialSize: { width: 1000, height: 680 },
   },
   photos: {
     title: 'Photos',

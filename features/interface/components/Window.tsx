@@ -253,7 +253,10 @@ function WindowContent({
       </header>
       <div className="appShell">
         <div className="appShellContent">
-          <AppComponent windowId={windowState.id} />
+          <AppComponent 
+            windowId={windowState.id} 
+            {...(windowState.appId === 'dateien' && windowState.initialPath ? { initialPath: windowState.initialPath } : {})}
+          />
         </div>
         {bottomBar && (
           <div className="appShellBottom">

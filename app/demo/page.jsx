@@ -1,17 +1,58 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Navbar from '@/components/Navbar'
+
+// Device detection helper
+const isMobileOrTablet = () => {
+  // Check user agent for mobile patterns
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera
+  const mobilePatterns = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i
+  const isMobileUA = mobilePatterns.test(userAgent.toLowerCase())
+
+  // Check for touch/coarse pointer (tablets and phones)
+  const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches
+
+  // Check screen width (tablets typically < 1024px)
+  const isSmallScreen = window.innerWidth < 1024
+
+  // Device is mobile/tablet if any of these conditions are true
+  return isMobileUA || (hasCoarsePointer && isSmallScreen)
+}
 
 export default function Demo() {
   const [isMuted, setIsMuted] = useState(true)
+  const [showMobileBlockModal, setShowMobileBlockModal] = useState(false)
+  const [isDesktop, setIsDesktop] = useState(true)
   const videoRef = useRef(null)
+
+  // Check device type on mount and window resize
+  useEffect(() => {
+    const checkDevice = () => {
+      setIsDesktop(!isMobileOrTablet())
+    }
+
+    checkDevice()
+    window.addEventListener('resize', checkDevice)
+
+    return () => {
+      window.removeEventListener('resize', checkDevice)
+    }
+  }, [])
 
   const toggleAudio = () => {
     if (videoRef.current) {
       videoRef.current.muted = !isMuted
       setIsMuted(!isMuted)
     }
+  }
+
+  const handleStartExperience = (e) => {
+    if (!isDesktop) {
+      e.preventDefault()
+      setShowMobileBlockModal(true)
+    }
+    // If desktop, allow normal navigation
   }
 
   return (
@@ -23,8 +64,8 @@ export default function Demo() {
         <div className="w-full md:w-[38%] flex items-center justify-center px-8 md:px-12 lg:px-16 relative z-10">
           <div className="max-w-xl pt-24 md:pt-28 lg:pt-32">
             <div className="inline-flex items-center gap-2 px-6 py-2 border-2 border-white bg-transparent text-white font-semibold rounded-full mt-70">
-              <span className="w-2 h-2 bg-[#FE4A2C] rounded-full animate-ping"></span>
-              Out Now
+              <span className="w-2 h-2 bg-[#FE4A2C] rounded-full animate-ping pl-2"></span>
+              Demo Out Now
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mt-10 mb-6 bungee-regular leading-tight">
@@ -33,12 +74,13 @@ export default function Demo() {
             
             <p className="text-base md:text-lg text-gray-300 leading-relaxed mb-10">
             Eine spielbare Mockumentary-Filmerfahrung, die Zuschauer einlädt, gemeinsam Rätsel zu lösen und Stück für Stück die Geschichte freizuschalten.
-            Als desktop-basierte, interaktive Experience verbindet das Projekt Schweizer Storytelling mit Webtechnologie und filmischer Inszenierung.
+            Als desktop-basierte, interaktive Experience verbindet das Projekt eine Schweizerdeutsche Story mit Webtechnologie und filmischer Inszenierung.
             Entwickelt für ein bis zwei Personen, die neugierig sind, Spuren zu lesen, Zusammenhänge zu hinterfragen und aktiv Teil der Erzählung zu werden.
             </p>
             
             <a
               href="/experience"
+              onClick={handleStartExperience}
               className="inline-flex items-center gap-2 px-8 py-4 border-2 border-white bg-transparent text-white font-semibold rounded-full hover:border-glow-gradient transition-all duration-300 hover:scale-105"
             >
               Film Experience starten
@@ -56,7 +98,7 @@ export default function Demo() {
             loop
             muted={isMuted}
             playsInline
-            className="absolute inset-0 w-full h-full object-cover scale-105"
+            className="absolute inset-0 w-full h-full object-cover scale-105 mt-8 md:mt-0"
           />
           
           {/* Overlay */}
@@ -81,6 +123,47 @@ export default function Demo() {
           </button>
         </div>
       </div>
+
+      {/* Mobile/Tablet Block Modal */}
+      {showMobileBlockModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          onClick={() => setShowMobileBlockModal(false)}
+        >
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-md"></div>
+          
+          {/* Modal */}
+          <div
+            className="relative z-10 bg-black/80 backdrop-blur-xl border-2 border-white/20 rounded-2xl p-8 md:p-10 max-w-md mx-4 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setShowMobileBlockModal(false)}
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-white/70 hover:text-white transition-colors"
+              aria-label="Schließen"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Content */}
+            <div className="text-center">
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+                Desktop Only
+              </h2>
+              <p className="text-base md:text-lg text-gray-300 mb-2 leading-relaxed">
+                Diese Experience ist nur auf einem Desktop-Gerät verfügbar.
+              </p>
+              <p className="text-sm md:text-base text-gray-400 leading-relaxed">
+                Bitte öffne sie auf einem Computer für das beste Erlebnis.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

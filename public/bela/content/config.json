@@ -1,0 +1,44 @@
+{
+  "_comment": "FILE: content/config.json - System configuration and todo/task definitions. Contains system name, login credentials, map image path, and all todo task definitions with their descriptions, expected answers, and success messages.",
+  "systemName": "Fallverwaltungssystem Detektei Gruber",
+  "validLogin": {
+    "username": "FranzStalder",
+    "password": "DreiZucker"
+  },
+  "mapImagePath": "./files/map.jpg",
+  "mapPreviewPath": "./files/map_preview.jpg",
+  "todoSteps": [
+  {
+    "id": "step1",
+    "title": "Ort",
+    "description": "In welchem Ort lebt Lisas Mutter derzeit?",
+    "inputLabel": "Gib den Ort ein.",
+    "expectedAnswer": "Zürich",
+    "successMessage": "Lisas Mutter lebt in Zürich. Erster Anhaltspunkt gesichert."
+  },
+  {
+    "id": "step2",
+    "title": "Strasse",
+    "description": "An welcher Strasse wohnt Lisas Mutter in Zürich?",
+    "inputLabel": "Gib den Strassennamen ein.",
+    "expectedAnswer": "Pelikanstrasse",
+    "successMessage": "Die Pelikanstrasse bestätigt. Der Suchradius wird enger."
+  },
+  {
+    "id": "step3",
+    "title": "Hausnummer",
+    "description": "Welche Hausnummer gehört zur Wohnung von Lisas Mutter?",
+    "inputLabel": "Gib die Hausnummer ein.",
+    "expectedAnswer": "45",
+    "successMessage": "Hausnummer 45. Das richtige Gebäude ist identifiziert."
+  },
+  {
+    "id": "step4",
+    "title": "Zeitfenster",
+    "description": "Zu welchem Zeitpunkt ist Lisas Mutter mit hoher Wahrscheinlichkeit zu Hause?",
+    "inputLabel": "Gib das Zeitfenster ein (z. B. HH:MM-HH:MM).",
+    "expectedAnswer": "08:00-09:00",
+    "successMessage": "Zeitfenster bestätigt. Zum nächsten Filmabschnitt /experience/movie/part3"
+  }
+]
+}

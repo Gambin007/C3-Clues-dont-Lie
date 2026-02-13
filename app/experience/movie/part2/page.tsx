@@ -1,17 +1,22 @@
 'use client'
 
+import React from 'react'
 import { useRouter } from 'next/navigation'
-import { useExperience } from '@/contexts/ExperienceContext'
-import MoviePlayer from '@/components/movie/MoviePlayer'
+import MoviePlayer from '@/components/MoviePlayer'
 
 export default function MoviePart2Page() {
   const router = useRouter()
-  const { markMovie2Done } = useExperience()
 
-  const handleMovieEnded = () => {
-    markMovie2Done()
-    router.push('/experience/bela')
+  const handleVideoEnded = () => {
+    router.push('/experience/bela/chat')
   }
 
-  return <MoviePlayer src="/media/movie/part2.mp4" onEnded={handleMovieEnded} />
+  return (
+    <MoviePlayer
+      src="/media/movie/part2.mp4"
+      onEnded={handleVideoEnded}
+      autoPlay={true}
+      preload="metadata"
+    />
+  )
 }

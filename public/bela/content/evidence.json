@@ -1,0 +1,50 @@
+[
+  {
+    "id": "ev-031-1",
+    "caseId": "L-031",
+    "filename": "./files/Mandatsaufnahme_Anna_Mueller.jpg",
+    "type": "image",
+    "description": "Scan Mandatsaufnahmeformular",
+    "requiresStepId": null
+  },
+    {
+    "id": "ev-031-2",
+    "caseId": "L-031",
+    "filename": "./files/IDMueller.jpg",
+    "type": "image",
+    "description": "Scan der Identitätskarte",
+    "requiresStepId": null
+  },
+          {
+    "id": "ev-031-2",
+    "caseId": "L-030",
+    "filename": "./files/winter.jpg",
+    "type": "image",
+    "description": "Ferienfoto",
+    "requiresStepId": "step1"
+  },
+      {
+    "id": "ev-031-2",
+    "caseId": "L-030",
+    "filename": "./files/peru.jpg",
+    "type": "image",
+    "description": "Ferienfoto",
+    "requiresStepId": "step1"
+  },
+      {
+    "id": "ev-031-2",
+    "caseId": "L-030",
+    "filename": "./files/galapagos.jpg",
+    "type": "image",
+    "description": "Ferienfoto",
+    "requiresStepId": "step1"
+  },
+        {
+    "id": "ev-031-2",
+    "caseId": "L-033",
+    "filename": "./files/radio_limmat.jpg",
+    "type": "image",
+    "description": "Aufnahme von Radio Limmat bei einer Recherche im Internet gefunden.",
+    "requiresStepId": "step3"
+  }
+]

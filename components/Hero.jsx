@@ -26,10 +26,10 @@ const Hero = () => {
 
       <div className="relative z-10 max-w-5xl mx-auto px-6 lg:px-8 text-center">
         <h1 className="text-2xl md:text-5xl lg:text-7xl font-bold mb-6 text-white leading-tight bungee-regular">
-          Wir schaffen cinematische Erlebnisse, die zum Nachdenken anregen.
+        Film und Rätsel vereint zu einer interaktiven Experience
         </h1>
         <p className="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed">
-          Ein kreatives Studentenkollektiv, das Film, Web und Content vereint, um überzeugende digitale Erlebnisse zu schaffen.
+        Ein kreatives Studentenkollektiv, das Film, Web und Content vereint, um überzeugende digitale Erlebnisse zu schaffen.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <a

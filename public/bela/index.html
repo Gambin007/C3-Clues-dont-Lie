@@ -1,0 +1,161 @@
+<!--
+  FILE: index.html
+  PURPOSE: Login page for the Case Management System
+  
+  This is the entry point of the application. It provides a fake authentication
+  system that allows users to "login" with credentials. The page:
+  - Checks if user is already logged in and redirects to app.html if so
+  - Shows a "Continue as [username]" option if a previous username exists
+  - Provides a login form that validates credentials against config.json
+  - Accepts any non-empty credentials OR specific credentials from config
+  - Stores session in localStorage and redirects to the main app on success
+  
+  WHY: Separates authentication flow from the main application, providing a
+  clean entry point. Uses localStorage for session persistence across page loads.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fallverwaltungssystem Detektei Gruber - Anmeldung</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body class="login-page">
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <h1>Fallverwaltungssystem Detektei Gruber</h1>
+        <p class="subtitle">Nur für berechtigte Nutzer</p>
+      </div>
+      
+      <div id="continue-as" class="continue-section hidden">
+        <p>Fortfahren als <strong id="continue-username"></strong>?</p>
+        <button id="continue-btn" class="btn btn-primary">Fortfahren</button>
+        <button id="switch-user-btn" class="btn btn-link">Benutzer wechseln</button>
+      </div>
+
+      <form id="login-form" class="login-form hidden">
+        <div class="form-group">
+          <label for="username">Benutzername</label>
+          <input type="text" id="username" name="username" required autocomplete="username" />
+        </div>
+        <div class="form-group">
+          <label for="password">Passwort</label>
+          <input type="password" id="password" name="password" required autocomplete="current-password" />
+        </div>
+        <div id="login-error" class="error-message hidden"></div>
+        <button type="submit" class="btn btn-primary btn-block">Anmelden</button>
+      </form>
+
+      <div class="login-footer">
+        <p>SYS v0.9.4 • Confidential</p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { checkSession, createSession } from './js/session.js';
+    import { loadConfig } from './js/store.js';
+
+    // Check if user is already logged in
+    try {
+      const session = checkSession();
+      if (session) {
+        window.location.href = 'app.html#/dashboard';
+        throw new Error('Redirecting'); // Prevent further execution
+      }
+    } catch (e) {
+      if (e.message !== 'Redirecting') {
+        console.error('Session check error:', e);
+      }
+    }
+
+    // Check for previous username
+    const lastUsername = localStorage.getItem('lastUsername');
+    const continueSection = document.getElementById('continue-as');
+    const loginForm = document.getElementById('login-form');
+    const continueBtn = document.getElementById('continue-btn');
+    const switchUserBtn = document.getElementById('switch-user-btn');
+    const continueUsername = document.getElementById('continue-username');
+
+    if (lastUsername) {
+      continueSection.classList.remove('hidden');
+      continueUsername.textContent = lastUsername;
+      
+      continueBtn.addEventListener('click', async () => {
+        try {
+          const config = await loadConfig();
+          const validLogin = config?.validLogin;
+          
+          // If there's a valid login config, we'd need the password, so show form
+          if (validLogin && validLogin.username === lastUsername) {
+            loginForm.classList.remove('hidden');
+            continueSection.classList.add('hidden');
+            document.getElementById('username').value = lastUsername;
+            document.getElementById('password').focus();
+          } else {
+            // No specific login required, just continue
+            createSession(lastUsername);
+            window.location.href = 'app.html#/dashboard';
+          }
+        } catch (error) {
+          console.error('Continue error:', error);
+          // Fallback: show form
+          loginForm.classList.remove('hidden');
+          continueSection.classList.add('hidden');
+        }
+      });
+
+      switchUserBtn.addEventListener('click', () => {
+        continueSection.classList.add('hidden');
+        loginForm.classList.remove('hidden');
+      });
+    } else {
+      // No last username, show form immediately
+      loginForm.classList.remove('hidden');
+    }
+
+    // Handle login form
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorEl = document.getElementById('login-error');
+
+      // Hide previous errors
+      errorEl.classList.add('hidden');
+
+      if (!username || !password) {
+        errorEl.textContent = 'Benutzername und Passwort sind erforderlich';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        // Load config to check for valid login
+        const config = await loadConfig();
+        const validLogin = config?.validLogin;
+
+        // If validLogin is configured, check it; otherwise accept any non-empty
+        if (validLogin) {
+          if (username !== validLogin.username || password !== validLogin.password) {
+            errorEl.textContent = 'Ungültige Anmeldedaten';
+            errorEl.classList.remove('hidden');
+            return;
+          }
+        }
+
+        // Store last username and create session
+        localStorage.setItem('lastUsername', username);
+        createSession(username);
+        window.location.href = 'app.html#/dashboard';
+      } catch (error) {
+        console.error('Login error:', error);
+        errorEl.textContent = 'Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.';
+        errorEl.classList.remove('hidden');
+      }
+    });
+  </script>
+</body>
+</html>

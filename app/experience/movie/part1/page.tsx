@@ -10,7 +10,7 @@ export default function MoviePart1Page() {
 
   const handleMovieEnded = () => {
     markMovie1Done()
-    router.push('/experience/interface')
+    router.push('/experience')
   }
 
   return <MoviePlayer src="/media/movie/part1.mp4" onEnded={handleMovieEnded} />

@@ -371,7 +371,7 @@ export default function Photos({ windowId }: { windowId: string }) {
                         }
                       }
                     }}
-                    onLoad={() => {
+                    onLoad={(e) => {
                       console.log('Image loaded successfully:', photo.url)
                       // Hide fallback when image loads
                       const container = (e.currentTarget as HTMLElement).parentElement
@@ -456,12 +456,12 @@ export default function Photos({ windowId }: { windowId: string }) {
               style={{
                 position: 'absolute',
                 top: '-40px',
-                right: 0,
+                right: '20px',
                 width: '32px',
                 height: '32px',
                 padding: 0,
-                background: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
+                background: 'rgba(30, 31, 36, 0.8)',
+                border: '1px solid var(--border)',
                 borderRadius: '8px',
                 cursor: 'pointer',
                 fontSize: '20px',
@@ -470,12 +470,16 @@ export default function Photos({ windowId }: { windowId: string }) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 transition: 'all 0.2s ease',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'
+                e.currentTarget.style.background = 'rgba(30, 31, 36, 0.95)'
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.25)'
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                e.currentTarget.style.background = 'rgba(30, 31, 36, 0.8)'
+                e.currentTarget.style.borderColor = 'var(--border)'
               }}
             >
               ×
@@ -513,7 +517,7 @@ export default function Photos({ windowId }: { windowId: string }) {
                         }
                       }
                     }}
-                    onLoad={() => {
+                    onLoad={(e) => {
                       console.log('Image loaded successfully:', selectedPhoto.url)
                       // Hide fallback when image loads
                       const container = (e.currentTarget as HTMLElement).parentElement
@@ -574,28 +578,9 @@ export default function Photos({ windowId }: { windowId: string }) {
                 alignItems: 'center',
               }}>
                 <button
+                  className="btn"
                   onClick={handlePrevious}
                   disabled={photoIndex === 0}
-                  style={{
-                    padding: '8px 16px',
-                    background: photoIndex === 0 ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.1)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    borderRadius: '8px',
-                    cursor: photoIndex === 0 ? 'not-allowed' : 'pointer',
-                    fontSize: '13px',
-                    color: photoIndex === 0 ? 'var(--muted)' : 'var(--text)',
-                    transition: 'all 0.2s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    if (photoIndex > 0) {
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (photoIndex > 0) {
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-                    }
-                  }}
                 >
                   ← Zurück
                 </button>
@@ -608,28 +593,9 @@ export default function Photos({ windowId }: { windowId: string }) {
                   {photoIndex + 1} / {currentPhotos.length}
                 </div>
                 <button
+                  className="btn"
                   onClick={handleNext}
                   disabled={photoIndex === currentPhotos.length - 1}
-                  style={{
-                    padding: '8px 16px',
-                    background: photoIndex === currentPhotos.length - 1 ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.1)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    borderRadius: '8px',
-                    cursor: photoIndex === currentPhotos.length - 1 ? 'not-allowed' : 'pointer',
-                    fontSize: '13px',
-                    color: photoIndex === currentPhotos.length - 1 ? 'var(--muted)' : 'var(--text)',
-                    transition: 'all 0.2s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    if (photoIndex < currentPhotos.length - 1) {
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (photoIndex < currentPhotos.length - 1) {
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-                    }
-                  }}
                 >
                   Vor →
                 </button>
@@ -637,28 +603,10 @@ export default function Photos({ windowId }: { windowId: string }) {
               {/* "Zu Datei springen" Button (optional, wenn fileDeepLink gesetzt) */}
               {fileDeepLink && (
                 <button
+                  className="btn"
                   onClick={() => {
                     setFileDeepLink(fileDeepLink)
                     createWindow('dateien')
-                  }}
-                  style={{
-                    padding: '8px 16px',
-                    background: 'rgba(59, 130, 246, 0.2)',
-                    border: '1px solid rgba(59, 130, 246, 0.4)',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                    color: 'var(--text)',
-                    fontWeight: 500,
-                    transition: 'all 0.2s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(59, 130, 246, 0.3)'
-                    e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.5)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'rgba(59, 130, 246, 0.2)'
-                    e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.4)'
                   }}
                 >
                   📄 Zu Datei springen

@@ -1,0 +1,33 @@
+{
+  "_comment": "FILE: content/gallery.json - List of images available in the chat gallery picker. Add image entries here to make them selectable in the chat. Each image needs a filename (in files/gallery/) and an optional label. Use 'specialReplies' to define automatic responses when this image is sent to specific contacts (use contact ID as key).",
+  "images": [
+    {
+      "filename": "IMG-2910.jpg",
+      "label": "IMG-2910",
+      "specialReplies": {
+        "contact-1": "Tim! Jetzt hauts mer denn de Nuggi use. Wieso rüehrsch du de Quitschi ins WC?!"
+      }
+    },
+    {
+      "filename": "galapagos.jpg",
+      "label": "IMG-2911",
+      "specialReplies": {
+        "contact-1": "Was schicksch mer das Foti? Das isch doch bereits im Fallverwaltigssystem abgleggt."
+      }
+    },
+    {
+      "filename": "peru.jpg",
+      "label": "IMG-2912",
+      "specialReplies": {
+        "contact-1": "Tim du muesch mir nid so Züg schicke. Leggs eifach im Fall ab."
+      }
+    },
+    {
+      "filename": "winter.jpg",
+      "label": "IMG-2913",
+      "specialReplies": {
+        "contact-1": "Ich has dir doch gester erklärt. Genau für so Sache isch euses interne System..."
+      }
+    }
+  ]
+}

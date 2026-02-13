@@ -1,0 +1,170 @@
+<!--
+  FILE: chat.html
+  PURPOSE: Standalone WhatsApp-like chat application
+  
+  This is a completely separate chat application from the case management system.
+  It provides:
+  - Contact list sidebar with all chat contacts
+  - Individual chat windows with message history
+  - Support for text messages, images, voice notes, and URLs
+  - Ability to add new contacts
+  - Message input and sending functionality
+  - Data persistence via JSON files in /content folder
+  
+  WHY: Provides a separate communication interface that can be used independently
+  or integrated into the case management system later. All chat data is stored
+  in JSON format for easy editing and content management.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chat - Detektei Gruber</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="stylesheet" href="assets/chat.css" />
+</head>
+<body class="chat-page">
+  <div class="chat-layout">
+    <!-- Contacts Sidebar -->
+    <aside class="chat-sidebar">
+      <div class="chat-sidebar-header">
+        <h2>Nachrichten</h2>
+        <button id="add-contact-btn" class="btn-icon" title="Kontakt hinzufügen">+</button>
+      </div>
+      <div class="chat-search">
+        <input type="text" id="contact-search" placeholder="Kontakte durchsuchen..." />
+      </div>
+      <div class="chat-contacts-list" id="contacts-list">
+        <!-- Contacts will be loaded here -->
+      </div>
+      
+      <!-- User Profile -->
+      <div class="chat-user-profile" id="user-profile">
+        <div class="chat-user-avatar" id="user-avatar">👤</div>
+        <div class="chat-user-info">
+          <div class="chat-user-name" id="user-name">Benutzer</div>
+          <div class="chat-user-status" id="user-status">Online</div>
+        </div>
+        <button id="edit-profile-btn" class="btn-icon-small" title="Profil bearbeiten">⚙</button>
+      </div>
+    </aside>
+
+    <!-- Main Chat Area -->
+    <main class="chat-main">
+      <div class="chat-empty" id="chat-empty">
+        <div class="chat-empty-icon">💬</div>
+        <h3>Wählen Sie einen Kontakt aus, um zu chatten</h3>
+        <p>Wählen Sie einen Kontakt aus der Seitenleiste oder fügen Sie einen neuen hinzu</p>
+      </div>
+
+      <div class="chat-window hidden" id="chat-window">
+        <!-- Chat Header -->
+        <header class="chat-header">
+          <div class="chat-header-info">
+            <div class="chat-avatar" id="chat-avatar">👤</div>
+            <div>
+              <div class="chat-name" id="chat-name">—</div>
+              <div class="chat-status" id="chat-status">—</div>
+            </div>
+          </div>
+          <button id="close-chat-btn" class="btn-icon" title="Chat schließen">✕</button>
+        </header>
+
+        <!-- Messages Area -->
+        <div class="chat-messages" id="chat-messages">
+          <!-- Messages will be loaded here -->
+        </div>
+
+        <!-- Message Input -->
+        <div class="chat-input-area">
+          <button id="attach-btn" class="btn-icon" title="Datei anhängen">📎</button>
+          <input type="text" id="message-input" placeholder="Nachricht eingeben..." />
+          <button id="send-btn" class="btn-icon" title="Senden">➤</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add Contact Modal -->
+  <div class="modal hidden" id="add-contact-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Neuen Kontakt hinzufügen</h3>
+        <button class="btn-icon" id="close-modal-btn">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="new-contact-name">Name</label>
+          <input type="text" id="new-contact-name" placeholder="Kontaktname" />
+        </div>
+        <div class="form-group">
+          <label for="new-contact-avatar">Avatar (Emoji oder Initialen)</label>
+          <input type="text" id="new-contact-avatar" placeholder="👤 oder AB" maxlength="2" />
+          <small style="color: var(--text-muted); font-size: 11px; margin-top: 4px; display: block;">
+            Geben Sie ein Emoji (👤, 😊) oder max. 2 Buchstaben (AB) ein
+          </small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" id="cancel-contact-btn">Abbrechen</button>
+        <button class="btn btn-primary" id="save-contact-btn">Kontakt hinzufügen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gallery Modal -->
+  <div class="modal hidden" id="gallery-modal">
+    <div class="modal-content modal-content-large">
+      <div class="modal-header">
+        <h3>Bild auswählen</h3>
+        <button class="btn-icon" id="close-gallery-btn">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="gallery-grid" id="gallery-grid">
+          <!-- Gallery images will be loaded here -->
+        </div>
+        <div class="gallery-empty hidden" id="gallery-empty">
+          <p>Keine Bilder in der Galerie verfügbar.</p>
+          <small>Fügen Sie Bilder zu <code>files/gallery/</code> hinzu und aktualisieren Sie <code>content/gallery.json</code>.</small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" id="cancel-gallery-btn">Abbrechen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Profile Modal -->
+  <div class="modal hidden" id="edit-profile-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Profil bearbeiten</h3>
+        <button class="btn-icon" id="close-profile-modal-btn">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="profile-name">Name</label>
+          <input type="text" id="profile-name" placeholder="Ihr Name" />
+        </div>
+        <div class="form-group">
+          <label>Profilbild</label>
+          <div style="padding: 10px; background: var(--bg-tertiary); border: 1px solid var(--border-dim); color: var(--text-muted); font-size: 12px; font-family: 'Courier New', monospace;">
+            🔒 Profilbild kann nur von Admin geändert werden.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="profile-status">Status</label>
+          <input type="text" id="profile-status" placeholder="Online, Offline, etc." />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" id="cancel-profile-btn">Abbrechen</button>
+        <button class="btn btn-primary" id="save-profile-btn">Profil speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/chat.js"></script>
+</body>
+</html>

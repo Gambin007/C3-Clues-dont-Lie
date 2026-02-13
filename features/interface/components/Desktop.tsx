@@ -20,9 +20,8 @@ export default function Desktop() {
       // ARCHIV ist gesperrt - zeige Overlay
       setShowArchiveLockOverlay(true)
     } else {
-      // ARCHIV ist entsperrt - öffne normal
-      createWindow('dateien')
-      // TODO: ARCHIV-Pfad an Dateien übergeben
+      // ARCHIV ist entsperrt - öffne normal mit ARCHIV-Pfad
+      createWindow('dateien', { initialPath: ['ARCHIV'] })
     }
   }
 
@@ -30,12 +29,12 @@ export default function Desktop() {
     // Öffne Dateien mit diesem Ordner
     const dateienWindow = windows.find(w => w.appId === 'dateien')
     if (dateienWindow) {
-      // Wenn Dateien bereits offen, fokussiere ihn
-      // TODO: Ordner-Pfad an Dateien übergeben
+      // Wenn Dateien bereits offen, fokussiere ihn und navigiere zum Ordner
+      // TODO: Könnte später erweitert werden, um bestehendes Fenster zu navigieren
+      createWindow('dateien', { initialPath: [folderName] })
     } else {
-      // Öffne neue Dateien
-      createWindow('dateien')
-      // TODO: Ordner-Pfad an Dateien übergeben
+      // Öffne neue Dateien mit Ordner-Pfad
+      createWindow('dateien', { initialPath: [folderName] })
     }
   }
 
