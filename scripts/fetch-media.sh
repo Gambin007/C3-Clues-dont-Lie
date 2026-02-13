@@ -89,11 +89,15 @@ else
   echo "Found media directory: $SRC_MEDIA_DIR"
 fi
 
-# Copy media files using rsync
-echo "Copying media files to $DEST using rsync..."
-mkdir -p "$PROJECT_ROOT/public"
-rsync -av --delete "$SRC_MEDIA_DIR/" "$PROJECT_ROOT/$DEST/" || {
-  echo "ERROR: Failed to copy media files with rsync"
+# Copy media files (no rsync available on Vercel)
+echo "Copying media files to $DEST (tar pipe, no rsync)..."
+mkdir -p "$PROJECT_ROOT/$DEST"
+
+# delete existing to mimic --delete behavior
+rm -rf "$PROJECT_ROOT/$DEST"/*
+# copy preserving structure
+( cd "$SRC_MEDIA_DIR" && tar -cf - . ) | ( cd "$PROJECT_ROOT/$DEST" && tar -xf - ) || {
+  echo "ERROR: Failed to copy media files with tar pipe"
   exit 1
 }
 
