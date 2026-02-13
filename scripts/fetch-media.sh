@@ -1,84 +1,99 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# -----------------------------
-# Config
-# -----------------------------
+# ===== Config =====
 TMP=".tmp_media"
 REPO_MAC="https://github.com/Gambin007/Mac_Interface.git"
-REPO_C3="Gambin007/C3-Clues-dont-Lie"
+REPO_C3="https://github.com/Gambin007/C3-Clues-dont-Lie.git"
 DEST="public/media"
 GIT_LFS_VERSION="v3.5.1"
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-export GIT_TERMINAL_PROMPT=0
-
 echo "=== Git LFS Media Fetch (Vercel-safe) ==="
 echo "Project root: $PROJECT_ROOT"
 
-# -----------------------------
-# Helpers
-# -----------------------------
+# ===== Helpers =====
+file_size() {
+  # macOS: stat -f%z, Linux: stat -c%s
+  stat -f%z "$1" 2>/dev/null || stat -c%s "$1" 2>/dev/null || echo "0"
+}
+
 copy_dir_tar() {
+  # copy_dir_tar <src_dir> <dest_dir>
   local src="$1"
   local dst="$2"
-  rm -rf "$dst"
   mkdir -p "$dst"
   (cd "$src" && tar -cf - .) | (cd "$dst" && tar -xf -)
 }
 
-is_lfs_pointer() {
-  local f="$1"
-  [ -f "$f" ] || return 1
-  head -n 1 "$f" 2>/dev/null | grep -q "version https://git-lfs.github.com/spec/v1"
+clone_and_lfs_pull() {
+  # clone_and_lfs_pull <repo_url> <folder_name>
+  local repo_url="$1"
+  local folder="$2"
+
+  echo "Cloning $repo_url -> $folder ..."
+  git clone --depth 1 "$repo_url" "$folder" >/dev/null 2>&1 || {
+    echo "ERROR: Failed to clone $repo_url"
+    exit 1
+  }
+
+  echo "Installing git-lfs locally ($folder)..."
+  (cd "$folder" && git lfs install --local >/dev/null 2>&1) || {
+    echo "ERROR: git lfs install failed in $folder"
+    exit 1
+  }
+
+  echo "Pulling LFS objects ($folder)..."
+  (cd "$folder" && git lfs pull) || {
+    echo "ERROR: git lfs pull failed in $folder"
+    exit 1
+  }
 }
 
-stat_size() {
-  local f="$1"
-  stat -f%z "$f" 2>/dev/null || stat -c%s "$f" 2>/dev/null || echo "0"
+find_media_dir() {
+  # find_media_dir <repo_root>
+  local root="$1"
+  if [ -d "$root/public/media" ]; then
+    echo "$root/public/media"
+    return 0
+  fi
+  local found
+  found="$(find "$root" -path "*/public/media" -type d | head -n 1 || true)"
+  if [ -z "$found" ] || [ ! -d "$found" ]; then
+    echo ""
+    return 1
+  fi
+  echo "$found"
 }
 
-# -----------------------------
-# Prepare tmp
-# -----------------------------
+# ===== Prep TMP =====
 rm -rf "$PROJECT_ROOT/$TMP"
 mkdir -p "$PROJECT_ROOT/$TMP"
 cd "$PROJECT_ROOT/$TMP"
 
-# -----------------------------
-# Install git-lfs locally (no apt / no rsync)
-# -----------------------------
+# ===== Install git-lfs binary (portable) =====
 echo "Downloading git-lfs (linux amd64) $GIT_LFS_VERSION..."
 GIT_LFS_URL="https://github.com/git-lfs/git-lfs/releases/download/${GIT_LFS_VERSION}/git-lfs-linux-amd64-${GIT_LFS_VERSION}.tar.gz"
-curl -sSL "$GIT_LFS_URL" -o lfs.tar.gz
+curl -sSL "$GIT_LFS_URL" -o lfs.tar.gz || { echo "ERROR: Failed to download git-lfs"; exit 1; }
 tar -xzf lfs.tar.gz
 export PATH="$PWD/git-lfs-${GIT_LFS_VERSION}:$PATH"
 
 echo "git-lfs version:"
 git-lfs version
 
-# -----------------------------
-# 1) Mac_Interface (PUBLIC) -> photos/images/audio + wallpaper
-# -----------------------------
-echo "Cloning Mac_Interface (public, no token)..."
-git clone --depth 1 "$REPO_MAC" repo_mac
-cd repo_mac
-git lfs install --local >/dev/null
-git lfs pull
-cd "$PROJECT_ROOT/$TMP"
-
-MAC_MEDIA_DIR="$PROJECT_ROOT/$TMP/repo_mac/public/media"
-if [ ! -d "$MAC_MEDIA_DIR" ]; then
-  echo "ERROR: Mac_Interface public/media not found at $MAC_MEDIA_DIR"
+# ===== 1) Mac_Interface (photos/images/audio + wallpaper) =====
+clone_and_lfs_pull "$REPO_MAC" "repo_mac"
+MAC_MEDIA_DIR="$(find_media_dir "$PROJECT_ROOT/$TMP/repo_mac")" || {
+  echo "ERROR: Could not find public/media in Mac_Interface clone"
   exit 1
-fi
-
-mkdir -p "$PROJECT_ROOT/$DEST"
+}
 
 echo "Copying from Mac_Interface -> $DEST (photos/images/audio)..."
+mkdir -p "$PROJECT_ROOT/$DEST"
 for folder in photos images audio; do
   if [ -d "$MAC_MEDIA_DIR/$folder" ]; then
-    echo " - $folder"
+    echo " - Replacing $DEST/$folder"
+    rm -rf "$PROJECT_ROOT/$DEST/$folder"
     copy_dir_tar "$MAC_MEDIA_DIR/$folder" "$PROJECT_ROOT/$DEST/$folder"
   else
     echo " - NOTE: $folder not found in Mac_Interface, skipping"
@@ -87,79 +102,86 @@ done
 
 echo "Copying wallpaper from Mac_Interface..."
 WALLPAPER_FOUND="$(find "$PROJECT_ROOT/$TMP/repo_mac" -type f -iname "macwallpaper.*" | head -n 1 || true)"
-if [ -z "$WALLPAPER_FOUND" ]; then
-  echo "ERROR: macwallpaper not found in Mac_Interface repo"
-  exit 1
-fi
-cp -f "$WALLPAPER_FOUND" "$PROJECT_ROOT/$DEST/macwallpaper.jpg"
-
-# sanity wallpaper size
-WALLPAPER_PATH="$PROJECT_ROOT/$DEST/macwallpaper.jpg"
-WALLPAPER_SIZE="$(stat_size "$WALLPAPER_PATH")"
-if [ "$WALLPAPER_SIZE" -lt $((10 * 1024)) ]; then
-  echo "ERROR: macwallpaper.jpg too small (${WALLPAPER_SIZE} bytes)"
-  exit 1
-fi
-echo "✓ macwallpaper.jpg size: ${WALLPAPER_SIZE} bytes"
-
-# -----------------------------
-# 2) C3 repo (NEEDS TOKEN) -> movie/videos/Team (LFS)
-# -----------------------------
-echo "Cloning C3 repo for LFS (movie/videos/Team)..."
-
-if [ -z "${GH_TOKEN:-}" ]; then
-  echo "ERROR: GH_TOKEN is not set. Add it in Vercel env vars."
-  exit 1
+if [ -n "$WALLPAPER_FOUND" ]; then
+  cp -f "$WALLPAPER_FOUND" "$PROJECT_ROOT/$DEST/macwallpaper.jpg"
+else
+  echo "WARNING: macwallpaper.* not found in Mac_Interface repo"
 fi
 
-# IMPORTANT: token ONLY for this URL (no global git config rewrite)
-C3_URL="https://x-access-token:${GH_TOKEN}@github.com/${REPO_C3}.git"
-
-git clone --depth 1 "$C3_URL" repo_c3
-cd repo_c3
-git lfs install --local >/dev/null
-git lfs pull
-cd "$PROJECT_ROOT/$TMP"
-
-C3_MEDIA_DIR="$PROJECT_ROOT/$TMP/repo_c3/public/media"
-if [ ! -d "$C3_MEDIA_DIR" ]; then
-  echo "ERROR: C3 public/media not found at $C3_MEDIA_DIR"
-  exit 1
+# ===== 2) C3 repo (movie/videos/Team) - needs GH_TOKEN if LFS/private =====
+# If GH_TOKEN is set, use it for authenticated clone (avoids LFS auth problems)
+C3_CLONE_URL="$REPO_C3"
+if [ -n "${GH_TOKEN:-}" ]; then
+  # token must have access to this repo + LFS
+  C3_CLONE_URL="https://${GH_TOKEN}@github.com/Gambin007/C3-Clues-dont-Lie.git"
 fi
+
+echo "Cloning C3 repo for media (movie/videos/Team)..."
+clone_and_lfs_pull "$C3_CLONE_URL" "repo_c3"
+
+C3_MEDIA_DIR="$(find_media_dir "$PROJECT_ROOT/$TMP/repo_c3")" || {
+  echo "ERROR: Could not find public/media in C3 clone"
+  exit 1
+}
 
 echo "Copying from C3 -> $DEST (movie/videos/Team)..."
 for folder in movie videos Team; do
   if [ -d "$C3_MEDIA_DIR/$folder" ]; then
-    echo " - $folder"
+    echo " - Replacing $DEST/$folder"
+    rm -rf "$PROJECT_ROOT/$DEST/$folder"
     copy_dir_tar "$C3_MEDIA_DIR/$folder" "$PROJECT_ROOT/$DEST/$folder"
   else
-    echo " - NOTE: $folder not found in C3, skipping"
+    echo " - NOTE: $folder not found in C3 repo, skipping"
   fi
 done
 
-# -----------------------------
-# Final pointer check
-# -----------------------------
-echo "Checking for Git LFS pointer files in $DEST..."
-POINTER_HITS=0
+# ===== Sanity checks =====
+echo "=== Sanity Checks ==="
 
-while IFS= read -r f; do
-  if is_lfs_pointer "$f"; then
-    POINTER_HITS=$((POINTER_HITS + 1))
-    echo "  - POINTER: $f ($(stat_size "$f") bytes)"
-  fi
-done < <(find "$PROJECT_ROOT/$DEST" -type f \
-  \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.mp3" -o -name "*.mp4" -o -name "*.mov" \) \
-  -size -300c -print 2>/dev/null || true)
-
-if [ "$POINTER_HITS" -gt 0 ]; then
-  echo "ERROR: Found $POINTER_HITS Git LFS pointer file(s) in $DEST"
+# wallpaper exists + > 10KB
+WALL="$PROJECT_ROOT/$DEST/macwallpaper.jpg"
+if [ ! -f "$WALL" ]; then
+  echo "ERROR: macwallpaper.jpg missing at $WALL"
   exit 1
 fi
+WALL_SIZE="$(file_size "$WALL")"
+if [ "$WALL_SIZE" -lt $((10*1024)) ]; then
+  echo "ERROR: macwallpaper.jpg too small (${WALL_SIZE} bytes) -> still a pointer?"
+  exit 1
+fi
+echo "✓ macwallpaper.jpg size: ${WALL_SIZE} bytes (OK)"
 
+# movie part1 must exist + > 1MB
+MOV="$PROJECT_ROOT/$DEST/movie/part1.mp4"
+if [ ! -f "$MOV" ]; then
+  echo "ERROR: movie/part1.mp4 missing in destination"
+  exit 1
+fi
+MOV_SIZE="$(file_size "$MOV")"
+if [ "$MOV_SIZE" -lt $((1*1024*1024)) ]; then
+  echo "ERROR: movie/part1.mp4 too small (${MOV_SIZE} bytes) -> likely LFS pointer"
+  exit 1
+fi
+echo "✓ movie/part1.mp4 size: ${MOV_SIZE} bytes (OK)"
+
+# Detect any LFS pointer files that slipped through
+echo "Checking for Git LFS pointer files in $DEST..."
+POINTER_FILES="$(find "$PROJECT_ROOT/$DEST" -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.mp3" -o -name "*.mp4" -o -name "*.mov" \) -size -300c -print 2>/dev/null || true)"
+if [ -n "$POINTER_FILES" ]; then
+  BAD=0
+  while IFS= read -r f; do
+    if head -n 1 "$f" 2>/dev/null | grep -q "version https://git-lfs.github.com/spec/v1"; then
+      echo "ERROR: LFS pointer remains: $f ($(file_size "$f") bytes)"
+      BAD=1
+    fi
+  done <<< "$POINTER_FILES"
+  if [ "$BAD" -eq 1 ]; then
+    exit 1
+  fi
+fi
 echo "✓ No Git LFS pointer files found"
 
 # Cleanup
 cd "$PROJECT_ROOT"
 rm -rf "$PROJECT_ROOT/$TMP"
-echo "=== Git LFS media fetch completed successfully ==="
+echo "=== Done: media prepared ==="
