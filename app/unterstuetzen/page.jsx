@@ -23,7 +23,8 @@ export default function UnterstuetzenPage() {
           
           {/* Text */}
           <p className="text-lg md:text-xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed">
-          bei der Realisierung unserer kreativen Projekte. Jeder Beitrag hilft uns, innovative digitale Erlebnisse zu schaffen und neue Geschichten zum Leben zu erwecken.
+          bei der Realisierung unserer kreativen Projekte. Diese Pilotfolge ist für dich kostenlos. Für uns war sie es nicht. Wenn dir das Erlebnis gefallen hat, freuen wir uns sehr über einen freiwilligen Beitrag.
+
           </p>
 
           {/* TWINT Button Card */}

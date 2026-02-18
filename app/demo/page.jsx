@@ -164,6 +164,21 @@ export default function Demo() {
           </div>
         </div>
       )}
+
+      {/* Rätselhilfe Link - Unauffällig am Ende */}
+      <div className="mt-12 text-center px-4 pb-6">
+        <p className="text-xs text-gray-500 opacity-80 mb-2">
+          Hinweis: Diese Hilfe enthält Spoiler und sollte nur verwendet werden, wenn du wirklich nicht weiterkommst.
+        </p>
+        <a
+          href="https://pub-b5c905be79734df794cad8fee3c595d4.r2.dev/help/Rätselhilfe.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs text-gray-500 hover:text-white transition-colors duration-300 opacity-80 hover:opacity-100 inline-block"
+        >
+          Rätselhilfe als PDF öffnen
+        </a>
+      </div>
     </div>
   )
 }

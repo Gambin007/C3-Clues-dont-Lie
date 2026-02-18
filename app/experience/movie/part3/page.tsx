@@ -8,7 +8,7 @@ export default function MoviePart3Page() {
   const router = useRouter()
 
   const handleVideoEnded = () => {
-    router.push('/')
+    router.push('/unterstuetzen')
   }
 
   return (
